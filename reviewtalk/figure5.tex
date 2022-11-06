@@ -1,0 +1,47 @@
+\begin{tikzpicture}[scale=0.8]
+	\node 	(s0)		at	(-2,4) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_0$};
+
+
+	\node 	(s1)		at	(-4,0) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_1$}
+		edge[<-,very thick]			node[auto]{$of_{x,1}$}	(s0);
+
+	\node 	(s2)		at	(0,0) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_2$}
+		edge[<-,very thick]			node[auto,swap]{$nof_{x,1}$}	(s0);
+
+
+	\draw[->,very thick] 			(s1) to 	node[auto]{$nof_{x,0}$} 		(s2);
+	\draw[->,very thick, bend right=40] 	(s2) to 	node[auto,swap]{$of_{x,0}$} 		(s1);
+
+	\draw[->,very thick,bend left=40] 	(s1) to 	node[auto]{$nof_{x,0}$} 		(s0);
+	\draw[->,very thick, bend right=40] 	(s2) to 	node[auto,swap]{$nof_{x,0}$} 		(s0);
+%
+	\draw[loop below,very thick] (s1) to 	node[auto]{$of_{x,0}$} 		(s1);
+	\draw[loop below,very thick] (s2) to 	node[auto]{$nof_{x,0}$} 	(s2);
+
+
+%-------------------------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------------------------
+	\node 	(s61)		at	(6,2) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_3$}
+		edge[<-,very thick]			node[auto,swap]{$of_{x,1}$}	(s2);
+
+	\node 	(s71)		at	(6,-2) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_4$}
+		edge[<-,very thick]			node[auto,swap]{$nof_{x,1}$}	(s2);
+
+
+	\draw[->,very thick, bend right=30] 	(s71) to 	node[auto]{$of_{x,\ast}$} 		(s61);
+	\draw[->,very thick, bend right=30] 	(s61) to 	node[auto,swap]{$nof_{x,\ast}$} 		(s71);
+
+	\draw[loop above,very thick] (s61) to 	node[auto]{$of_{x,\ast}$} 	(s61);
+	\draw[loop below,very thick] (s71) to 	node[auto]{$nof_{x,\ast}$} 	(s71);
+
+	\draw[->,very thick, bend left=40] 	(s71) to 	node[auto,swap]{$nof_{x,0}$} 		(s2);
+	\draw[->,very thick, bend right=40] 	(s61) to 	node[auto]{$nof_{x,0}$} 		(s2);
+
+%-------------------------------------------------------------------------------------------------
+	\node 	(s62)		at	(-8,2) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_3$}
+		edge[<-,very thick]			node[auto,swap]{$of_{x,1}$}	(s1);
+
+	\node 	(s72)		at	(-8,-2) 	[circle, thick, draw=blue!50,fill=blue!20,inner sep=0pt,minimum size=.60cm]{$s_4$}
+		edge[<-,very thick]			node[auto]{$nof_{x,1}$}	(s1);
+
+\end{tikzpicture}

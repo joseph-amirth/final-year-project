@@ -1,0 +1,272 @@
+%\documentclass[colorBG,slideColor,fyma]{beamer}
+\documentclass[xcolor=dvipsnames]{beamer}
+\setbeamertemplate{navigation symbols}{}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{xypic}
+\usepackage{epsfig}
+
+\usecolortheme[named=Brown]{structure}
+\usetheme{Boadilla}
+
+\def\xcolorversion{2.00}
+\def\xkeyvalversion{1.8}
+\usepackage[version=0.96]{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri}
+
+\title[]{Title of the Project}
+\author{Aarthi N\\Joseph Immanuel Amirtharaj}
+\institute[SSNCE]{SSN College of Engineering, Chennai
+}
+\date{September 24, 2013}
+
+\input{bmacros}
+\begin{document}
+\begin{frame}
+\maketitle
+\end{frame}
+
+
+\AtBeginSection[]{
+\begin{frame}{beamer}
+\frametitle{Outline}
+\tableofcontents[currentsection]
+\end{frame}
+}
+
+
+
+\begin{frame}{Why Convert Logical Formulas to Automata?}
+\pause
+\begin{itemize}
+\item To solve the {\bf Satisfiability Problem}.
+\pause
+\item What is the {\bf Satisfiability Problem} for any Logic?
+\pause
+\item Say Propositional Logic (PL).
+\pause
+\item Given a formula $\alpha$ in PL, 
+\item Does there exists a {\bf valuation} $\nu$ such that $\nu(\alpha)=T$ (i.e., $\nu \models \alpha$)? 
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Propositional Logic}
+\begin{itemize}
+\item M teaches AI:$~~~~~~M$
+\item S teaches AI:$~~~~~~~S$
+\item M $\&$ S write a book on AI:$~~~~~~~WB$
+%
+\pause
+\item $R=(M\land S)\Implies WB$
+%
+\pause
+
+\end{itemize}
+\[\{R,\lnot WB,S\}~\mbox{entails}~\lnot M\]
+\pause
+if each of the $\{R,\lnot WB,S\}$ are true then does $\lnot M$ hold?
+\end{frame}
+
+\begin{frame}{Propositional Logic}
+\begin{itemize}
+\item Does there exist a valuation $\nu$ such that 
+\[\nu \models\{R,\lnot WB,S, M\}\]
+\pause
+\item What is a valuation?
+\pause
+Assignment of {\bf truth values} to $M,S,WB$.
+\pause
+\item Does there exist a valuation $\nu$ such that 
+\[\nu \models R \land \lnot WB\land S\land M\]
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Propositional Logic}
+\begin{itemize}
+\item Countable set of proposition symbols $P=\{p_1,p_2,p_3,\cdots\}$
+\item Set of propositional connectives $\{\lnot,\lor,\land,\Implies\}$. 
+\end{itemize}
+\pause
+The set of all {\bf well-formed formulas} ({\bf wff}s) of propositional logic are defined inductively as the smallest set satisfying the following conditions:
+\begin{itemize}
+\item Every $p_i \in P$ is a wff, (such wffs are called {\bf atomic formulas})
+\item If $\alpha$ is a wff then $(\lnot \alpha)$ is a wff,
+\item If $\alpha,\beta$ are wffs then so are $(\alpha \lor \beta),(\alpha \land \beta),(\alpha \Implies \beta)$ and
+\item Nothing else is a wff.
+\end{itemize}
+\pause
+Alternatively:
+\[\alpha,\beta \in \Phi::= p_i\in P \mid (\lnot \alpha) \mid (\alpha \lor \beta) \mid (\alpha \land \beta)\mid (\alpha \Implies \beta).\]
+\end{frame}
+
+\begin{frame}{Propositional Logic:Semantics}
+\begin{itemize}
+\item {\bf valuations} $\nu:P \to \{T,F\}$. 
+\item Every symbol in $P$ gets exactly one of the truth values $\{T,F\}$.
+\end{itemize}
+\pause
+$\nu$ can be extended inductively to the set of all wffs as follows:
+\begin{itemize}
+\item \[ \nu(\lnot\beta)=\left\{ \begin{array}{ll}
+                 T	& \nu(\beta)=F\\
+                 F	& \nu(\beta)=T
+                   
+                \end{array}
+                	\right. \]
+ 
+\item \[ \nu(\alpha \lor \beta)=\left\{ \begin{array}{ll}
+                 T	& ~\mbox{when}~ \nu(\alpha)=T ~\mbox{or}~ \nu(\beta)=T\\
+                 F	& otherwise
+                   
+                \end{array}
+                	\right. \]
+ 
+\item \[ \nu(\alpha \land \beta)=\left\{ \begin{array}{ll}
+                 T	& ~\mbox{when}~ \nu(\alpha)=T ~\mbox{and}~ \nu(\beta)=T\\
+                 F	& otherwise
+                   
+                \end{array}
+                	\right. \]
+
+\item \[ \nu(\alpha \Implies \beta)=\left\{ \begin{array}{ll}
+                 F	& ~\mbox{when}~ \nu(\alpha)=T ~\mbox{and}~ \nu(\beta)=F\\
+                 T	& otherwise
+                   
+                \end{array}
+                	\right. \]
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Propositional Satisfiability}
+Given $\alpha$, how do we check the satisfiability of $\alpha$
+\begin{itemize}
+\item Find the set of all propositions occurring in $\alpha$, $P_{\alpha}$,
+\item Generate all possible valuations over $P_{\alpha}$,
+\item There will be $2^{|P_{\alpha}|}$ such valuations,
+\item Check the satisfiability for each such valuation one after another,
+\item If at least one valuation satisfies $\alpha$ (i.e., $\nu(\alpha)=T$, for some $\nu$), \newline report {\bf success}.
+\item If all valuations fail to satisfy $\alpha$ (i.e., $\nu(\alpha)=T$, for all $\nu$), \newline report {\bf failure}.
+\end{itemize}
+\end{frame}
+%
+%
+\begin{frame}{Temporal Logic}
+\begin{itemize}
+\item if M and S teach AI for two consecutive years then eventually they will write the AI book.
+\[\Box \Big(\big((M \land S)\Implies \nxt (M \land S) \big)\Implies \Diamond WB \Big)\]
+\pause
+\item Temporal Modalities
+\begin{itemize}
+\item $\nxt$, $\nxt \alpha$ now if $\alpha$ holds in the immediate future.
+\item $\Box$, $\Box \alpha$ now if $\alpha$ holds {\bf always} in future.
+\item $\Diamond$, $\Diamond \alpha$ now if $\alpha$ holds {\bf sometimes} in future. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+%
+%%----------------------------------------------------------------------------------
+\begin{frame}{LTL Syntax and Semantics}
+
+\[\psi \in \Psi ::= p \in P \mid  \lnot \psi \mid \psi_1\lor\psi_2 \mid \nxt \psi \mid \Box \psi \mid \Diamond \psi\]
+%\pause
+
+LTL formulas are interpreted over sequence of valuations 
+\[\nu=\nu_0\nu_1\nu_2\cdots\nu_i\cdots, ~\mbox{where}~ \forall i \in \omega, \nu_i \subset_{fin} P\] 
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------
+\begin{frame}{Satisfiability Relation}
+\begin{itemize}
+\item $\nu,i\models p$ iff $p \in \nu_i$.
+\item $\nu,i\models \lnot \psi$ iff $\nu,i\not\models \psi$.
+\item $\nu,i\models \psi\lor\psi^{\prime}$ iff $\nu,i\models \psi$ or $\nu,i\models \psi^{\prime}$.
+\item $\nu,i\models \nxt\psi$ iff $\nu,i+1\models \psi$.
+\item $\nu,i\models \Diamond \psi$ iff $\exists j\ge i$, $\nu,j\models \psi$.
+\item $\nu,i\models \Diamond \psi$ iff $\forall j\ge i$, $\nu,j\models \psi$.
+\end{itemize} 
+\[Models(\psi)=\{\nu=\nu_0\nu_1\nu_2\cdots \mid \nu,0\models \psi\}\]
+\end{frame}
+
+
+
+\begin{frame}{LTL Satisfiability}
+Given an LTL formula $\psi$, does there exist a $\nu$ such that \[\nu,0 \models \psi\]
+\begin{itemize}
+\item Construct a B\"uchi Automaton $A_{\psi}$ over $\Sigma=2^{P_{\psi}}$ such that \[Lang(A_{\psi})=Models(\psi)\]
+\item If $Lang(A_{\psi})$ is non-empty then $\psi$ is satisfiable.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{B\"uchi Automata}
+NFA over infinite words:
+\[B=(Q,\Sigma,\Delta,I,G)\]
+$B$ accepts an infinite word $w \in \Sigma^{\omega}$ if there exists an infinite run $\rho$ of $B$ on $w$ such that some good state $q \in G$ occurs infinitely many times in $\rho$.
+%
+\newline
+\begin{figure}
+\begin{center}
+\input{figure1}
+\end{center}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{LTL to B\"uchi Automata}
+Given LTL formula $\psi_0$
+\begin{itemize}
+\item Construct the closure set $cl$ containing
+\begin{itemize}
+\item all subformulas of $\psi_0$
+\item their negations
+\item additional formulas, $\nxt \Diamond \alpha$ if $\Diamond \alpha \in cl$
+\end{itemize}
+\item Define $UR=\{\Diamond \alpha \in cl\}$
+\item Construct the atom set $AT$ as subsets of $cl$ satisfying following criteria:
+\begin{itemize}
+\item for all $\alpha \in cl$, $\alpha \in A$ iff $\lnot \alpha \not \in A$
+\item for all $\alpha \lor \beta \in cl$, $\alpha \lor \beta\in A$ iff $\alpha \in A$ or $\beta \in A$
+\item for all $\Diamond \alpha \in cl$, $\Diamond \alpha \in A$ iff $\alpha \in A$ or $\nxt \Diamond \alpha \in A$
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{LTL to B\"uchi Automata Continued}
+\begin{itemize}
+\item Define $Q=AT \times UR$
+\item Define $I= \{(A,u) \mid \psi_0 \in A,u=\emptyset\}$
+\item Define $G= \{(A,u) \mid u=\emptyset\}$
+\item Define $(A,u)\step{P'}(A',u')$ if the following conditions hold:
+\begin{itemize}
+\item $P'=A \cap P$
+\item for every $\nxt \alpha \in cl$, $\nxt \alpha \in A$ iff $\alpha \in A'$
+\item \[ u'=\left\{ \begin{array}{ll}
+                 \{\Diamond \alpha \in u \mid \alpha \not \in A'\}	& u \not = \emptyset\\
+                 \{\Diamond \alpha \in A' \mid \alpha \not \in A'\}	& u  = \emptyset
+                   
+                \end{array}
+                	\right. \]
+
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+{\bf Thank You}
+\end{center}
+\end{frame}
+%
+%
+
+\end{document}

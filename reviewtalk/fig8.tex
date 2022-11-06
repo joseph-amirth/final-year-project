@@ -1,0 +1,21 @@
+	\node 	(f0')		at	(4,10) 	[rectangle, thick]{$j$};
+
+	\node 	(f1')		at	(4,7) 	[rectangle, thick, draw=blue!50,fill=green!20,inner sep=0pt,minimum size=.4cm]{$$};
+
+	\node 	(f2')		at	(4,5) 	[rectangle, thick, draw=blue!50,fill=green!20,inner sep=0pt,minimum size=.4cm]{$$};
+
+	\node 	(f3')		at	(4,1) 	[rectangle, thick, draw=blue!50,fill=green!20,inner sep=0pt,minimum size=.4cm]{$$};
+
+	\node 	(f4')		at	(4,-1) 	[rectangle, thick]{};
+
+	\draw[->, thick]	(f0')	to	node[auto]{}	(f1');
+	\draw[->, thick]	(f1')	to	node[auto]{}	(f2');
+	\draw[->, thick]	(f2')	to	node[auto]{}	(f3');
+	\draw[->, thick]	(f3')	to	node[auto]{}	(f4');
+
+	\draw[->, very thick]	(e1')	to	node[auto]{}	(f1');
+	\draw[->, very thick]	(e3')	to	node[auto]{}	(f3');
+%	\draw[->, very thick]	(f3')	to	node[auto]{}	(e3');
+
+%	\node 	(e) at (2.5,-2) [rectangle, thick]{$\chi(e,j)=(\down e-\down e')\cup (\up e-\up e'')$};
+
