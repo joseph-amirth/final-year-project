@@ -1,0 +1,108 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+// Deterministic JSON.stringify()
+import {Context, Contract, Info, Returns, Transaction} from 'fabric-contract-api';
+import stringify from 'json-stringify-deterministic';
+import sortKeysRecursive from 'sort-keys-recursive';
+import {Signature} from './signature';
+
+@Info({title: 'SignatureAdd', description: 'Smart contract for adding signatures'})
+export class SignatureAddContract extends Contract {
+
+    @Transaction()
+    public async InitSignatureDB(ctx: Context): Promise<void> {
+        const signatures: Signature[] = [
+            {
+                ID: '0',
+                CreatedAt: 100,
+                AttackName: 'DDoS',
+                AttackData: 'Many packets',
+            },
+            {
+                ID: '1',
+                CreatedAt: 150,
+                AttackName: 'Reconnaisance',
+                AttackData: 'Few packets',
+            },
+            {
+                ID: '2',
+                CreatedAt: 200,
+                AttackName: 'Theft',
+                AttackData: 'Few packets',
+            },
+            {
+                ID: '3',
+                CreatedAt: 175,
+                AttackName: 'Benign',
+                AttackData: 'Moderate packets',
+            },
+        ];
+
+        for (const signature of signatures) {
+            signature.doctype = 'signature';
+            await ctx.stub.putState(signature.ID, Buffer.from(stringify(sortKeysRecursive(signature))));
+            console.info(`Signature ${signature.ID} initialized`);
+        }
+    }
+
+    // AddSignature issues a new signature to the world state with given details.
+    @Transaction()
+    public async AddSignature(ctx: Context, id: string, createdAt: number, attackName: string, attackData: string): Promise<void> {
+        const exists = await this.SignatureExists(ctx, id);
+        if (exists) {
+            throw new Error(`The signature ${id} already exists`);
+        }
+
+        const signature = {
+            ID: id,
+            CreatedAt: createdAt,
+            AttackName: attackName,
+            AttackData: attackData,
+        };
+        // we insert data in alphabetic order using 'json-stringify-deterministic' and 'sort-keys-recursive'
+        await ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(signature))));
+    }
+
+    // ReadSignature returns the signature stored in the world state with given id.
+    @Transaction(false)
+    public async ReadSignature(ctx: Context, id: string): Promise<string> {
+        const signatureJSON = await ctx.stub.getState(id); // get the signature from chaincode state
+        if (!signatureJSON || signatureJSON.length === 0) {
+            throw new Error(`The signature ${id} does not exist`);
+        }
+        return signatureJSON.toString();
+    }
+
+    // SignatureExists returns true when signature with given ID exists in world state.
+    @Transaction(false)
+    @Returns('boolean')
+    public async SignatureExists(ctx: Context, id: string): Promise<boolean> {
+        const signatureJSON = await ctx.stub.getState(id);
+        return signatureJSON && signatureJSON.length > 0;
+    }
+
+    // GetAllSignatures returns all signatures currently present in the world state.
+    @Transaction(false)
+    @Returns('string')
+    public async GetAllSignatures(ctx: Context): Promise<string> {
+        const signatures = [];
+        const iterator = await ctx.stub.getStateByRange('', '');
+        let result = await iterator.next();
+        while (!result.done) {
+            const strValue = Buffer.from(result.value.value.toString()).toString('utf8');
+            let record;
+            try {
+                record = JSON.parse(strValue);
+            } catch (err) {
+                console.log(err);
+                record = strValue;
+            }
+            signatures.push(record);
+            result = await iterator.next();
+        }
+        return JSON.stringify(signatures);
+    }
+
+}
+

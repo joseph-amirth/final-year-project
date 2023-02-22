@@ -1,0 +1,21 @@
+{
+   "extends":"@tsconfig/node14/tsconfig.json",
+   "compilerOptions": {
+       "experimentalDecorators": true,
+       "emitDecoratorMetadata": true,
+       "outDir": "dist",
+        "module": "es2020",
+        "target": "es2020",
+       "moduleResolution": "node",
+       "declaration": true,
+       "sourceMap": true,
+       "noImplicitAny": true,
+       "skipLibCheck": true
+   },
+   "include": [
+       "./src/**/*"
+   ],
+   "exclude": [
+       "./src/**/*.spec.ts"
+   ]
+}
