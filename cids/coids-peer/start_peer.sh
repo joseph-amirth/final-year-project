@@ -1,0 +1,2 @@
+cd /
+peer node start

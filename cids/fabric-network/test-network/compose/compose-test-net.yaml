@@ -19,6 +19,7 @@ volumes:
   peer0.org3.example.com:
   peer1.org3.example.com:
 
+
 networks:
   test:
     name: fabric_test
@@ -35,8 +36,8 @@ services:
       - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7053
       - ORDERER_OPERATIONS_LISTENADDRESS=orderer0.example.com:9443
     volumes:
-      - ${FABRIC_SAMPLES_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer0.example.com/msp:/var/hyperledger/orderer/msp
-      - ${FABRIC_SAMPLES_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/:/var/hyperledger/orderer/tls
+      - ${FABRIC_NETWORK_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer0.example.com/msp:/var/hyperledger/orderer/msp
+      - ${FABRIC_NETWORK_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer0.example.com/tls/:/var/hyperledger/orderer/tls
       - orderer0.example.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
@@ -53,8 +54,8 @@ services:
       - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7153
       - ORDERER_OPERATIONS_LISTENADDRESS=orderer1.example.com:9543
     volumes:
-      - ${FABRIC_SAMPLES_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer1.example.com/msp:/var/hyperledger/orderer/msp
-      - ${FABRIC_SAMPLES_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/:/var/hyperledger/orderer/tls
+      - ${FABRIC_NETWORK_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer1.example.com/msp:/var/hyperledger/orderer/msp
+      - ${FABRIC_NETWORK_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/:/var/hyperledger/orderer/tls
       - orderer1.example.com:/var/hyperledger/production/orderer
     ports:
       - 7150:7150
@@ -71,8 +72,8 @@ services:
       - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7253
       - ORDERER_OPERATIONS_LISTENADDRESS=orderer2.example.com:9643
     volumes:
-      - ${FABRIC_SAMPLES_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer/msp
-      - ${FABRIC_SAMPLES_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/:/var/hyperledger/orderer/tls
+      - ${FABRIC_NETWORK_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer/msp
+      - ${FABRIC_NETWORK_DIR}/test-network/organizations/ordererOrganizations/example.com/orderers/orderer2.example.com/tls/:/var/hyperledger/orderer/tls
       - orderer2.example.com:/var/hyperledger/production/orderer
     ports:
       - 7250:7250
@@ -101,9 +102,10 @@ services:
     volumes:
       - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/fabric
       - peer0.org1.example.com:/var/hyperledger/production
-    ports: 
+    ports:
       - 7051:7051
       - 9444:9444
+      - 3000:3000
 
   peer1.org1.example.com:
     container_name: peer1.org1.example.com
@@ -127,9 +129,10 @@ services:
     volumes:
       - ../organizations/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
       - peer1.org1.example.com:/var/hyperledger/production
-    ports: 
+    ports:
       - 7151:7151
       - 9544:9544
+      - 3100:3000
 
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
@@ -153,9 +156,10 @@ services:
     volumes:
       - ../organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
       - peer0.org2.example.com:/var/hyperledger/production
-    ports: 
+    ports:
       - 9051:9051
       - 9445:9445
+      - 3001:3000
 
   peer1.org2.example.com:
     container_name: peer1.org2.example.com
@@ -179,9 +183,10 @@ services:
     volumes:
       - ../organizations/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/fabric
       - peer1.org2.example.com:/var/hyperledger/production
-    ports: 
+    ports:
       - 9151:9151
       - 9545:9545
+      - 3101:3000
 
   peer0.org3.example.com:
     container_name: peer0.org3.example.com
@@ -205,9 +210,10 @@ services:
     volumes:
       - ../organizations/peerOrganizations/org3.example.com/peers/peer0.org3.example.com:/etc/hyperledger/fabric
       - peer0.org3.example.com:/var/hyperledger/production
-    ports: 
+    ports:
       - 11051:11051
       - 9446:9446
+      - 3002:3000
 
   peer1.org3.example.com:
     container_name: peer1.org3.example.com
@@ -231,9 +237,10 @@ services:
     volumes:
       - ../organizations/peerOrganizations/org3.example.com/peers/peer1.org3.example.com:/etc/hyperledger/fabric
       - peer1.org3.example.com:/var/hyperledger/production
-    ports: 
+    ports:
       - 11151:11151
       - 9546:9546
+      - 3102:3000
 
   cli:
     container_name: cli
