@@ -7,11 +7,12 @@
 import { startServer } from './server.js';
 
 import { getGateway } from './gateway.js';
-import { initModel, updateModel, getModel } from './model-update.js';
+import { initGlobalModel, getGlobalModel, updateGlobalModel, updateGlobalModelCID } from './global-model-update.js';
+import { initLocalModels } from './local-model-add.js';
 
 async function main(): Promise<void> {
-    const channelName: string = 'mychannel';
-    const chaincodeName: string = 'basic';
+    const channelName = 'mychannel';
+    const chaincodeName = 'basic';
 
     // Get a gateway connection.
     const gateway = await getGateway();
@@ -21,9 +22,13 @@ async function main(): Promise<void> {
         const network = gateway.getNetwork(channelName);
 
         // Get the smart contract from the network.
-        const contract = network.getContract(chaincodeName, 'ModelUpdateContract');
+        const GMUcontract = network.getContract(chaincodeName, 'GlobalModelUpdateContract');
 
-        await initModel(contract);
+        await initGlobalModel(GMUcontract);
+
+        const LMAcontract = network.getContract(chaincodeName, 'LocalModelAddContract');
+
+        await initLocalModels(LMAcontract);
     } finally {
         gateway.close();
     }
@@ -38,4 +43,3 @@ await startServer().catch(error => {
     console.error('******** FAILED to start the server:', error);
     process.exitCode = 1;
 });
-

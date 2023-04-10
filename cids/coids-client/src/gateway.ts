@@ -10,7 +10,7 @@ import * as crypto from 'crypto';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { TextDecoder } from 'util';
-import { infoln } from './utils.js';
+import { infoln, envOrDefault } from './utils.js';
 
 import * as url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
@@ -18,24 +18,25 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
 const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
-const mspId = envOrDefault('MSP_ID', 'Org1MSP');
+const mspId = envOrDefault('MSP_ID', 'Org2MSP');
 
 // Path to crypto materials.
-const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com'));
+const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', 'fabric-network', 'test-network', 'organizations', 'peerOrganizations', 'org2.example.com'));
+
 // Path to user private key directory.
-const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
+const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org2.example.com', 'msp', 'keystore'));
 
 // Path to user certificate.
-const certPath = envOrDefault('CERT_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'User1@org1.example.com-cert.pem'));
+const certPath = envOrDefault('CERT_PATH', path.resolve(cryptoPath, 'users', 'User1@org2.example.com', 'msp', 'signcerts', 'User1@org2.example.com-cert.pem'));
 
 // Path to peer tls certificate.
-const tlsCertPath = envOrDefault('TLS_CERT_PATH', path.resolve(cryptoPath, 'peers', 'peer0.org1.example.com', 'tls', 'ca.crt'));
+const tlsCertPath = envOrDefault('TLS_CERT_PATH', path.resolve(cryptoPath, 'peers', 'peer0.org2.example.com', 'tls', 'ca.crt'));
 
 // Gateway peer endpoint.
-const peerEndpoint = envOrDefault('PEER_ENDPOINT', 'localhost:7051');
+const peerEndpoint = envOrDefault('PEER_ENDPOINT', 'localhost:9051');
 
 // Gateway peer SSL host name override.
-const peerHostAlias = envOrDefault('PEER_HOST_ALIAS', 'peer0.org1.example.com');
+const peerHostAlias = envOrDefault('PEER_HOST_ALIAS', 'peer0.org2.example.com');
 
 const utf8Decoder = new TextDecoder();
 
@@ -53,25 +54,25 @@ async function newGrpcConnection(): Promise<grpc.Client> {
 const client: grpc.Client = await newGrpcConnection();
 
 export async function getGateway(): Promise<Gateway> {
-  const gateway: Gateway = connect({
-      client,
-      identity: await newIdentity(),
-      signer: await newSigner(),
-      // Default timeouts for different gRPC calls
-      evaluateOptions: () => {
-          return { deadline: Date.now() + 5000 }; // 5 seconds
-      },
-      endorseOptions: () => {
-          return { deadline: Date.now() + 15000 }; // 15 seconds
-      },
-      submitOptions: () => {
-          return { deadline: Date.now() + 5000 }; // 5 seconds
-      },
-      commitStatusOptions: () => {
-          return { deadline: Date.now() + 60000 }; // 1 minute
-      },
-  });
-  return gateway;
+    const gateway: Gateway = connect({
+        client,
+        identity: await newIdentity(),
+        signer: await newSigner(),
+        // Default timeouts for different gRPC calls
+        evaluateOptions: () => {
+            return { deadline: Date.now() + 5000 }; // 5 seconds
+        },
+        endorseOptions: () => {
+            return { deadline: Date.now() + 15000 }; // 15 seconds
+        },
+        submitOptions: () => {
+            return { deadline: Date.now() + 5000 }; // 5 seconds
+        },
+        commitStatusOptions: () => {
+            return { deadline: Date.now() + 60000 }; // 1 minute
+        },
+    });
+    return gateway;
 }
 
 async function newIdentity(): Promise<Identity> {
@@ -85,13 +86,6 @@ async function newSigner(): Promise<Signer> {
     const privateKeyPem = await fs.readFile(keyPath);
     const privateKey = crypto.createPrivateKey(privateKeyPem);
     return signers.newPrivateKeySigner(privateKey);
-}
-
-/**
- * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
- */
-function envOrDefault(key: string, defaultValue: string): string {
-    return process.env[key] || defaultValue;
 }
 
 /**
