@@ -3,12 +3,16 @@
  */
 
 import {SignatureAddContract} from './signatureAdd';
-
-import {ModelUpdateContract} from './modelUpdate';
+import {LocalModelAddContract} from './localModelAdd';
+import {GlobalModelUpdateContract} from './globalModelUpdate';
 
 export {SignatureAddContract} from './signatureAdd';
+export {LocalModelAddContract} from './localModelAdd';
+export {GlobalModelUpdateContract} from './globalModelUpdate';
 
-export {ModelUpdateContract} from './modelUpdate';
-
-export const contracts: any[] = [SignatureAddContract, ModelUpdateContract];
+export const contracts: any[] = [
+    SignatureAddContract, 
+    LocalModelAddContract, 
+    GlobalModelUpdateContract
+];
 

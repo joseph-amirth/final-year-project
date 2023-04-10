@@ -131,7 +131,7 @@ export class AssetTransferContract extends Contract {
     @Transaction(false)
     @Returns('boolean')
     public async AssetExists(ctx: Context, id: string): Promise<boolean> {
-        const assetJSON = await ctx.stub.getState(id);
+        const assetJSON: Uint8Array = await ctx.stub.getState(id);
         return assetJSON && assetJSON.length > 0;
     }
 

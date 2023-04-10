@@ -14,6 +14,9 @@ export class Model {
     public ID: string;
 
     @Property()
+    public prevCID: string;
+
+    @Property()
     public CID: string;
 
 }
