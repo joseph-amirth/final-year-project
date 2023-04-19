@@ -1,48 +1,57 @@
-import pyshark
+import json
+import subprocess
+
 from model import predict
+from timestamp_utils import difference_in_milliseconds
 
-capture = pyshark.LiveCapture(interface='eth0') 
+log_file = '/var/log/snort/alert_json.txt'
+watch_process = subprocess.Popen(
+    ['tail', '-F', log_file], stdout=subprocess.PIPE)
 
-connections = dict()
-for packet in capture.sniff_continuously():
-    if 'tcp' in packet:
-        # Get possible keys from the IP addresses and the ports
-        ip = packet['ip']
-        tcp = packet['tcp']
+connections = {}
+for line in iter(watch_process.stdout.readline, ''):
+    line_str = line.decode('utf-8').strip()
+    json_obj = json.loads(line_str)
 
-        source_ip = ip.src
-        source_port = tcp.srcport
+    if json_obj['sid'] < 10000000:
+        continue
 
-        dest_ip = ip.dst
-        dest_port = tcp.dstport
+    src_ap = json_obj['src_ap']
+    dst_ap = json_obj['dst_ap']
 
-        key = f'{source_ip}:{source_port}-{dest_ip}:{dest_port}'
-        other = f'{dest_ip}:{dest_port}-{source_ip}:{source_port}'
+    proto = json_obj['proto']
+    service = json_obj['service']
 
-        # Initialise/Update TCP flow information
-        if key in connections:
-            info = connections[key]
-            info['OUT_BYTES'] += int(tcp.len)
-            info['OUT_PKTS'] += 1
-        elif other in connections:
-            info = connections[other]
-            info['IN_BYTES'] += int(tcp.len)
-            info['IN_PKTS'] += 1
-        else:
-            info = dict()
-            info['SOURCE_IPV4_ADDRESS_PORT'] = f'{source_ip}:{source_port}';
-            info['DEST_IPV4_ADDRESS_PORT'] = f'{dest_ip}:{dest_port}';
-            info['PROTOCOL'] = int(packet['ip'].proto)
-            info['L7_PROTO'] = 1
-            info['IN_BYTES'] = 0
-            info['OUT_BYTES'] = 0
-            info['IN_PKTS'] = 0
-            info['OUT_PKTS'] = 1
-            info['TCP_FLAGS'] = packet['tcp'].flags
-            info['FLOW_DURATION_MILLISECONDS'] = 0
-            connections[key] = info
+    tcp_len = json_obj['tcp_len'] if 'tcp_len' in json_obj else 0
+    tcp_flags = json_obj['tcp_flags'] if 'tcp_flags' in json_obj else ''
 
-        temp = key if key in connections else other
-        info = connections[temp]
-        info['FLOW_DURATION_MILLISECONDS'] = tcp.time_delta
-        predict(info)
+    key = f'{src_ap}-{dst_ap}'
+    other = f'{dst_ap}-{src_ap}'
+
+    if key in connections:
+        info = connections[key]
+        info['OUT_BYTES'] += tcp_len
+        info['OUT_PKTS'] += 1
+    elif other in connections:
+        info = connections[other]
+        info['IN_BYTES'] += tcp_len
+        info['IN_PKTS'] += 1
+    else:
+        info = dict()
+        info['SRC_AP'] = src_ap
+        info['DST_AP'] = dst_ap
+        info['PROTOCOL'] = 6 if proto == 'TCP' else 17
+        info['L7_PROTO'] = 1
+        info['IN_BYTES'] = 0
+        info['OUT_BYTES'] = 0
+        info['IN_PKTS'] = 0
+        info['OUT_PKTS'] = 0
+        info['TCP_FLAGS'] = tcp_flags
+        info['FLOW_BEGIN_TIME'] = json_obj['timestamp']
+        connections[key] = info
+
+    temp = key if key in connections else other
+    info = connections[temp]
+    info['FLOW_DURATION_MILLISECONDS'] = difference_in_milliseconds(
+        info['FLOW_BEGIN_TIME'], json_obj['timestamp'])
+    predict(info)
