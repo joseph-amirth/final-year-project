@@ -1,4 +1,5 @@
 import json
+import socket
 import subprocess
 
 from model import predict
@@ -19,7 +20,7 @@ for line in iter(watch_process.stdout.readline, ''):
     src_ap = json_obj['src_ap']
     dst_ap = json_obj['dst_ap']
 
-    proto = json_obj['proto']
+    proto = socket.getprotobyname(json_obj['proto'])
     service = json_obj['service']
 
     tcp_len = json_obj['tcp_len'] if 'tcp_len' in json_obj else 0
@@ -40,7 +41,7 @@ for line in iter(watch_process.stdout.readline, ''):
         info = dict()
         info['SRC_AP'] = src_ap
         info['DST_AP'] = dst_ap
-        info['PROTOCOL'] = 6 if proto == 'TCP' else 17
+        info['PROTOCOL'] = proto
         info['L7_PROTO'] = 1
         info['IN_BYTES'] = 0
         info['OUT_BYTES'] = 0
