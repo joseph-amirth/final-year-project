@@ -2,7 +2,8 @@ import json
 import socket
 import subprocess
 
-from model import predict
+from http_client_utils import inform_admin_of_intrusion
+from model_utils import predict
 from timestamp_utils import difference_in_milliseconds
 
 log_file = '/var/log/snort/alert_json.txt'
@@ -15,6 +16,7 @@ for line in iter(watch_process.stdout.readline, ''):
     json_obj = json.loads(line_str)
 
     if json_obj['sid'] < 10000000:
+        inform_admin_of_intrusion(json_obj)
         continue
 
     src_ap = json_obj['src_ap']
