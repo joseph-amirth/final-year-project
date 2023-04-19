@@ -25,7 +25,12 @@ for line in iter(watch_process.stdout.readline, ''):
     proto = socket.getprotobyname(json_obj['proto'])
     service = json_obj['service']
 
-    tcp_len = json_obj['tcp_len'] if 'tcp_len' in json_obj else 0
+    payload = 0
+    if 'tcp_len' in json_obj:
+        payload = json_obj['tcp_len']
+    elif 'udp_len' in json_obj:
+        payload = json_obj['udp_len']
+
     tcp_flags = json_obj['tcp_flags'] if 'tcp_flags' in json_obj else ''
 
     key = f'{src_ap}-{dst_ap}'
@@ -33,11 +38,11 @@ for line in iter(watch_process.stdout.readline, ''):
 
     if key in connections:
         info = connections[key]
-        info['OUT_BYTES'] += tcp_len
+        info['OUT_BYTES'] += payload
         info['OUT_PKTS'] += 1
     elif other in connections:
         info = connections[other]
-        info['IN_BYTES'] += tcp_len
+        info['IN_BYTES'] += payload
         info['IN_PKTS'] += 1
     else:
         info = dict()
