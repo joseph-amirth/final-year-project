@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import { leaderElectionRouter } from './leader-election.router.js';
 import { infoln, errorln } from './utils.js';
 
@@ -11,7 +11,7 @@ export async function startServer(): Promise<void> {
         extended: true,
     }));
 
-    server.get('/', (request: Request, response: Response) => {
+    server.get('/', (_, response: Response) => {
         response.send('CoIDS peer server works!');
     });
 

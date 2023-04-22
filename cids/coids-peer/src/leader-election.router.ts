@@ -1,15 +1,16 @@
 import { randomInt } from 'crypto';
 import express, { Request, Response, Router } from 'express';
-import { sendGetRequest, sendPostRequest } from './http-request-utils.js';
+import axios from 'axios';
+
 import { peers, whoami } from './peers.js';
-import { updateGlobalModel } from './update-global-model.js';
+import { performAggregation } from './aggregation.js';
 import { infoln, successln } from './utils.js';
 
 export const leaderElectionRouter: Router = express.Router();
 
 leaderElectionRouter.get('/', (request: Request, response: Response) => {
     for (const peer of peers) {
-        sendGetRequest(peer, 'initiate');
+        axios.get(`http://${peer}:3000/leaderelection/initiate`);
         infoln(`[Sent Init Request]: to ${peer}`);
     }
     response.send('Leader election initiated');
@@ -24,8 +25,10 @@ leaderElectionRouter.get('/initiate', (request: Request, response: Response) => 
     infoln(`[Initiating leader election]: Random ID = ${id}`);
 
     for (const peer of peers) {
-        const postData = `peer=${whoami}&id=${id}`;
-        sendPostRequest(peer, 'postid', postData);
+        axios.post(`http://${peer}:3000/leaderelection/postid`, {
+            peer: whoami,
+            id: id
+        });
         infoln(`[Sent ID]: ${id} to ${peer}`);
     }
 });
@@ -41,7 +44,6 @@ leaderElectionRouter.post('/postid', (request: Request, response: Response) => {
 
     if (peersAndIds.length == peers.length) {
         successln('[Received all IDs]: Terminating');
-        console.log(peersAndIds);
 
         const index: number = peersAndIds.findIndex(([peer, _]) => peer == whoami);
         const id: number = peersAndIds[index][1];
@@ -49,7 +51,6 @@ leaderElectionRouter.post('/postid', (request: Request, response: Response) => {
         let leader: boolean = true;
         for (const peerAndId of peersAndIds) {
             const otherId: number = peerAndId[1];
-            console.log(`Other ID: ${otherId}`);
             if (id < otherId) {
                 leader = false;
             }
@@ -59,7 +60,7 @@ leaderElectionRouter.post('/postid', (request: Request, response: Response) => {
 
         if (leader) {
             successln('[Elected as Leader]: Updating global model');
-            updateGlobalModel();
+            performAggregation();
         }
     }
 });

@@ -3,7 +3,7 @@ WORKDIR /ds-client
 COPY package*.json .
 COPY tsconfig.json .
 COPY src ./src
-RUN npm install
+RUN npm install; exit 0
 
 FROM hyperledger/fabric-peer:latest
 
@@ -13,3 +13,5 @@ COPY start*.sh /
 RUN apk update && apk add --update nodejs npm
 
 EXPOSE 3000/tcp
+
+CMD [ "/bin/sh", "/start.sh" ]
