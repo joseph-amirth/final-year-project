@@ -11,13 +11,10 @@ volumes:
   orderer2.example.com:
 
   peer0.org1.example.com:
-  peer1.org1.example.com:
 
   peer0.org2.example.com:
-  peer1.org2.example.com:
 
   peer0.org3.example.com:
-  peer1.org3.example.com:
 
 
 networks:
@@ -101,38 +98,12 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
     volumes:
       - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com:/etc/hyperledger/fabric
+      - ../organizations/peerOrganizations/org1.example.com/users:/etc/users
       - peer0.org1.example.com:/var/hyperledger/production
     ports:
       - 7051:7051
       - 9444:9444
-      - 3000:3000
-
-  peer1.org1.example.com:
-    container_name: peer1.org1.example.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.org1.example.com
-      - CORE_PEER_ADDRESS=peer1.org1.example.com:7151
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:7151
-      - CORE_PEER_CHAINCODEADDRESS=peer1.org1.example.com:7152
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7152
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.example.com:7151
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:7151
-      - CORE_PEER_LOCALMSPID=Org1MSP
-      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
-      - CORE_OPERATIONS_LISTENADDRESS=peer1.org1.example.com:9544
-      - CORE_METRICS_PROVIDER=prometheus
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org1"}
-      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
-    volumes:
-      - ../organizations/peerOrganizations/org1.example.com/peers/peer1.org1.example.com:/etc/hyperledger/fabric
-      - peer1.org1.example.com:/var/hyperledger/production
-    ports:
-      - 7151:7151
-      - 9544:9544
-      - 3100:3000
+      - 3001:3000
 
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
@@ -155,38 +126,12 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
     volumes:
       - ../organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com:/etc/hyperledger/fabric
+      - ../organizations/peerOrganizations/org2.example.com/users:/etc/users
       - peer0.org2.example.com:/var/hyperledger/production
     ports:
       - 9051:9051
       - 9445:9445
-      - 3001:3000
-
-  peer1.org2.example.com:
-    container_name: peer1.org2.example.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.org2.example.com
-      - CORE_PEER_ADDRESS=peer1.org2.example.com:9151
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:9151
-      - CORE_PEER_CHAINCODEADDRESS=peer1.org2.example.com:9152
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9152
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.example.com:9151
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:9151
-      - CORE_PEER_LOCALMSPID=Org2MSP
-      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
-      - CORE_OPERATIONS_LISTENADDRESS=peer1.org2.example.com:9545
-      - CORE_METRICS_PROVIDER=prometheus
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org2"}
-      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
-    volumes:
-      - ../organizations/peerOrganizations/org2.example.com/peers/peer1.org2.example.com:/etc/hyperledger/fabric
-      - peer1.org2.example.com:/var/hyperledger/production
-    ports:
-      - 9151:9151
-      - 9545:9545
-      - 3101:3000
+      - 3003:3000
 
   peer0.org3.example.com:
     container_name: peer0.org3.example.com
@@ -209,38 +154,12 @@ services:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
     volumes:
       - ../organizations/peerOrganizations/org3.example.com/peers/peer0.org3.example.com:/etc/hyperledger/fabric
+      - ../organizations/peerOrganizations/org3.example.com/users:/etc/users
       - peer0.org3.example.com:/var/hyperledger/production
     ports:
       - 11051:11051
       - 9446:9446
-      - 3002:3000
-
-  peer1.org3.example.com:
-    container_name: peer1.org3.example.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.org3.example.com
-      - CORE_PEER_ADDRESS=peer1.org3.example.com:9151
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:9151
-      - CORE_PEER_CHAINCODEADDRESS=peer1.org3.example.com:9152
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9152
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org3.example.com:9151
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org3.example.com:9151
-      - CORE_PEER_LOCALMSPID=Org3MSP
-      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
-      - CORE_OPERATIONS_LISTENADDRESS=peer1.org3.example.com:9546
-      - CORE_METRICS_PROVIDER=prometheus
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer1org3"}
-      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
-    volumes:
-      - ../organizations/peerOrganizations/org3.example.com/peers/peer1.org3.example.com:/etc/hyperledger/fabric
-      - peer1.org3.example.com:/var/hyperledger/production
-    ports:
-      - 11151:11151
-      - 9546:9546
-      - 3102:3000
+      - 3005:3000
 
   cli:
     container_name: cli
