@@ -2,22 +2,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 // Deterministic JSON.stringify().
-import {Context, Contract, Info, Returns, Transaction} from 'fabric-contract-api';
+import { Context, Contract, Info, Returns, Transaction } from 'fabric-contract-api';
 import stringify from 'json-stringify-deterministic';
 import sortKeysRecursive from 'sort-keys-recursive';
-import {Model} from './model';
-import {TextDecoder} from 'util';
+import { Model } from './model';
+import { TextDecoder } from 'util';
 
 const utf8Decoder = new TextDecoder();
 
-@Info({title: 'LocalModelAdd', description: 'Smart contract for adding updated local models'})
+@Info({ title: 'LocalModelAdd', description: 'Smart contract for adding updated local models' })
 export class LocalModelAddContract extends Contract {
 
     @Transaction(true)
     public async InitLocalModels(ctx: Context): Promise<void> {
         const buffer = Buffer.alloc(4);
         buffer.writeInt32BE(0, 0);
-        ctx.stub.putState('localModelCount', buffer);
+        await ctx.stub.putState('localModelCount', buffer);
     }
 
     // GetLocalModelCount returns the number of local models currently in the world state.
@@ -62,7 +62,7 @@ export class LocalModelAddContract extends Contract {
         let result = await iterator.next();
         while (!result.done) {
             const strValue = Buffer.from(result.value.value.toString()).toString('utf8');
-            let localModel = JSON.parse(strValue);
+            let localModel: Model = JSON.parse(strValue);
             localModels.push(localModel);
             result = await iterator.next();
         }
@@ -76,14 +76,14 @@ export class LocalModelAddContract extends Contract {
         const localModels: Model[] = await this.GetLocalModels(ctx);
 
         for (const localModel of localModels) {
-            ctx.stub.deleteState(localModel.ID);
+            await ctx.stub.deleteState(localModel.ID);
         }
 
         // Reset the local model count.
         const buffer = Buffer.alloc(4);
         buffer.writeInt32BE(0, 0);
 
-        ctx.stub.putState('localModelCount', buffer);
+        await ctx.stub.putState('localModelCount', buffer);
 
         // Return the list of local models.
         return localModels;
@@ -93,4 +93,3 @@ export class LocalModelAddContract extends Contract {
         return num.toString().padStart(10, '0');
     }
 }
-
