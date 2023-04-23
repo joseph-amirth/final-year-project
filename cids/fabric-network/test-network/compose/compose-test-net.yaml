@@ -131,7 +131,7 @@ services:
     ports:
       - 9051:9051
       - 9445:9445
-      - 3003:3000
+      - 3002:3000
 
   peer0.org3.example.com:
     container_name: peer0.org3.example.com
@@ -159,7 +159,7 @@ services:
     ports:
       - 11051:11051
       - 9446:9446
-      - 3005:3000
+      - 3003:3000
 
   cli:
     container_name: cli

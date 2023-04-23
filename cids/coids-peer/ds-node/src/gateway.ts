@@ -18,25 +18,38 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
 const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
-const mspId = envOrDefault('MSP_ID', 'Org2MSP');
+const mspId = envOrDefault('CORE_PEER_LOCALMSPID', 'Org1MSP');
 
-// Path to crypto materials.
-const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', 'fabric-network', 'test-network', 'organizations', 'peerOrganizations', 'org2.example.com'));
+// Path to peer directory.
+const cryptoPath = path.resolve('/', 'etc', 'hyperledger', 'fabric');
+
+// Path to users directory.
+const usersPath = path.resolve('/', 'etc', 'users');
+
+const user = (() => {
+    if (mspId == 'Org1MSP')
+        return 'User1@org1.example.com';
+    if (mspId == 'Org2MSP')
+        return 'User1@org2.example.com';
+    if (mspId == 'Org3MSP')
+        return 'User1@org3.example.com';
+    return '';
+})();
 
 // Path to user private key directory.
-const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org2.example.com', 'msp', 'keystore'));
+const keyDirectoryPath = path.resolve(usersPath, user, 'msp', 'keystore');
 
 // Path to user certificate.
-const certPath = envOrDefault('CERT_PATH', path.resolve(cryptoPath, 'users', 'User1@org2.example.com', 'msp', 'signcerts', 'User1@org2.example.com-cert.pem'));
+const certPath = path.resolve(usersPath, user, 'msp', 'signcerts', `${user}-cert.pem`);
 
 // Path to peer tls certificate.
-const tlsCertPath = envOrDefault('TLS_CERT_PATH', path.resolve(cryptoPath, 'peers', 'peer0.org2.example.com', 'tls', 'ca.crt'));
+const tlsCertPath = path.resolve(cryptoPath, 'tls', 'ca.crt');
 
 // Gateway peer endpoint.
-const peerEndpoint = envOrDefault('PEER_ENDPOINT', 'localhost:9051');
+const peerEndpoint = envOrDefault('CORE_PEER_ADDRESS', 'localhost:7051');
 
 // Gateway peer SSL host name override.
-const peerHostAlias = envOrDefault('PEER_HOST_ALIAS', 'peer0.org2.example.com');
+const peerHostAlias = envOrDefault('CORE_PEER_ID', 'peer0.org1.example.com');
 
 const utf8Decoder = new TextDecoder();
 

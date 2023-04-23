@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+<header>
+    <h1 style="text-align: center;">Anomalies Detected</h1>
+</header>
+
+<main>
+    <div class="container">
+        <ul style="list-style-type: none; position:relative; padding:0px">
+            <% data.forEach(function(data_el) { %>
+                <nav class="navbar w-100 navbar-expand-lg nav-fill navbar-light bg-light">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <h5 class="nav-link disabled" style="color:black">Anomaly </h5>
+                        </li>
+                        <li class="nav-item">
+                            <h5 class="nav-link disabled">Probability of Intrusion:
+                                <span style="color:red">
+                                    <%= data_el.PROB %>%
+                                </span>
+                            </h5>
+                        </li>
+                        <li class="nav-item">
+                            <h5 class="nav-link disabled"><b>Source:</b>
+                                <%= data_el.SRC_AP %>
+                            </h5>
+                        </li>
+                        <li class="nav-item">
+                            <h5 class="nav-link disabled"><b>Destination:</b>
+                                <%= data_el.DST_AP %>
+                            </h5>
+                        </li>
+                    </ul>
+                </nav>
+                <form action="/api/retrain" method="POST" class="jumbotron">
+                    <% for (let key in data_el) { %>
+                        <input type="hidden" name="<%= key %>" value="<%= data_el[key] %>" />
+                        <% } %>
+                            <li><b>Protocol: </b>
+                                <%= data_el.PROTOCOL %>
+                            </li>
+                            <li><b>In Bytes: </b>
+                                <%= data_el.IN_BYTES %>
+                            </li>
+                            <li><b>Out Bytes: </b>
+                                <%= data_el.OUT_BYTES %>
+                            </li>
+                            <li><b>In Packets: </b>
+                                <%= data_el.IN_PKTS %>
+                            </li>
+                            <li><b>Out Packets: </b>
+                                <%= data_el.OUT_PKTS %>
+                            </li>
+                            <li><b>Flow Duration in Milliseconds: </b>
+                                <%= data_el.FLOW_DURATION_MILLISECONDS %>
+                            </li>
+                            <br>
+                            <br>
+                            <%- include('options'); %>
+                </form>
+                <% }); %>
+        </ul>
+    </div>
+
+</main>
+<footer>
+    <%- include('footer'); %>
+</footer>
+
+</body>
+
+</html>

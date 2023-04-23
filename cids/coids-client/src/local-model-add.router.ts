@@ -2,17 +2,16 @@ import express, { Request, Response, Router } from 'express';
 
 import { getGateway } from './gateway.js';
 import { addLocalModel, getLocalModels, popLocalModels } from './local-model-add.js';
-import { infoln, errorln, successln } from './utils.js';
 
 const gateway = await getGateway();
 
-const network = await gateway.getNetwork('mychannel');
+const network = gateway.getNetwork('mychannel');
 
-const contract = await network.getContract('basic', 'LocalModelAddContract');
+const contract = network.getContract('basic', 'LocalModelAddContract');
 
 export const localModelAddRouter: Router = express.Router();
 
-localModelAddRouter.get('/', async (request: Request, response: Response) => {
+localModelAddRouter.get('/', (_, response: Response) => {
     response.send('LocalModelAdd API works!');
 });
 
@@ -23,12 +22,12 @@ localModelAddRouter.post('/add', async (request: Request, response: Response) =>
     response.send('Added local model.');
 });
 
-localModelAddRouter.get('/get', async (request: Request, response: Response) => {
+localModelAddRouter.get('/get', async (_, response: Response) => {
     const localModels = await getLocalModels(contract);
     response.send(JSON.stringify(localModels));
 });
 
-localModelAddRouter.get('/pop', async (request: Request, response: Response) => {
+localModelAddRouter.get('/pop', async (_, response: Response) => {
     const localModels = await popLocalModels(contract);
     response.send(JSON.stringify(localModels));
 });

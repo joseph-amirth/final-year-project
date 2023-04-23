@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { connectToDatabase } from './mongodb.js';
 import { startServer } from './server.js';
 
 import { getGateway } from './gateway.js';
-import { initGlobalModel, getGlobalModel, updateGlobalModel, updateGlobalModelCID } from './global-model-update.js';
+import { initGlobalModel } from './global-model-update.js';
 import { initLocalModels } from './local-model-add.js';
 
 async function main(): Promise<void> {
@@ -36,6 +37,11 @@ async function main(): Promise<void> {
 
 await main().catch(error => {
     console.error('******** FAILED to run the application:', error);
+    process.exitCode = 1;
+});
+
+await connectToDatabase().catch(error => {
+    console.error('******** FAILED to connect to the database:', error);
     process.exitCode = 1;
 });
 
