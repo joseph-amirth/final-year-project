@@ -1,5 +1,4 @@
 **/dist
 **/node_modules
-**/*.pkl
 **/__pycache__
 **/.env
