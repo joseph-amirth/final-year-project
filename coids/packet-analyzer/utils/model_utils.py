@@ -1,5 +1,4 @@
 from utils.http_client_utils import inform_admin_of_anomaly
-from utils.http_client_utils import add_local_model
 from tensorflow.keras.models import load_model
 
 model = load_model('init_model.h5')
@@ -12,7 +11,6 @@ def get_model():
 
 def update_model(new_model):
     global model
-    add_local_model(model, new_model)
     model = new_model
 
 
@@ -30,7 +28,8 @@ def predict(info):
     result = model.predict([arr], verbose=0)
     info['PROB'] = round(result[0][1] * 100, 2)
     # print(info['PROB'])
-    inform_admin_of_anomaly(info)
+    if info['PROB'] > 20:
+        inform_admin_of_anomaly(info)
 
 
 # print(model.predict([[6, 43000, 2000, 50, 25, 800]]))

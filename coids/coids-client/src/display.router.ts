@@ -8,11 +8,11 @@ displayRouter.get('/', async (request: Request, response: Response) => {
 });
 
 displayRouter.get('/anomalies', async (request: Request, response: Response) => {
-    const anomalies = await getCollection('anomalies').find({}).toArray();
+    const anomalies = await getCollection('anomalies').find({}).limit(100).toArray();
     response.render('display_anomalies', { data: anomalies });
 });
 
 displayRouter.get('/intrusions', async (request: Request, response: Response) => {
-    const intrusions = await getCollection('intrusions').find({}).toArray();
+    const intrusions = await getCollection('intrusions').find({}).limit(100).toArray();
     response.render('display_intrusions', { data: intrusions });
 });

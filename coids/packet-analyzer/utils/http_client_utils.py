@@ -7,14 +7,16 @@ base_url = 'http://localhost:3000/api'
 inform_url = f'{base_url}/inform'
 
 
-def inform_admin_of_anomaly(info):
+def inform_admin_of_anomaly(info, verbose=False):
     response = requests.post(f'{inform_url}/anomaly', info)
-    # print(response.text)
+    if verbose:
+        print(response.text)
 
 
-def inform_admin_of_intrusion(info):
+def inform_admin_of_intrusion(info, verbose=False):
     response = requests.post(f'{inform_url}/intrusion', info)
-    # print(response.text)
+    if verbose:
+        print(response.text)
 
 
 def add_local_model(old_model, new_model):
@@ -30,6 +32,7 @@ def add_local_model(old_model, new_model):
         'prevCID': prev_cid,
         'CID': new_cid,
     })
+
     print(response.text)
 
 

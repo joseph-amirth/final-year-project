@@ -12,6 +12,7 @@ app = Flask(__name__)
 @app.route('/api/retrain', methods=['POST'])
 def retrain():
     assert request.headers['Content-Type'] == 'application/json'
+
     info = request.get_json()
 
     arr = []
@@ -31,8 +32,8 @@ def retrain():
 def aggregate():
     assert request.headers['Content-Type'] == 'application/json'
 
-    json = request.get_json()
-    cid = aggregate_models(json)
+    info = request.get_json()
+    cid = aggregate_models(info)
 
     return cid
 

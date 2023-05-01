@@ -2,12 +2,11 @@ import ipfsApi
 import tensorflow as tf
 
 from utils.http_client_utils import update_global_model
+from utils.model_utils import update_model
 from utils.serialize_utils import deserialize
 
 
 def aggregate_models(json):
-    print(json)
-
     client = ipfsApi.Client('127.0.0.1', 8080)
 
     models = []
@@ -17,6 +16,8 @@ def aggregate_models(json):
         models.append(model)
 
     aggregate_model = federated_averaging(models)
+
+    update_model(aggregate_model)
 
     return update_global_model(aggregate_model)
 
