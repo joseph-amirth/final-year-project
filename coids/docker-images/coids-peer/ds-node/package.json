@@ -1,8 +1,8 @@
 {
-    "name": "peer-ds-client",
+    "name": "ds-node",
     "type": "module",
     "version": "1.0.0",
-    "description": "Distributed system client",
+    "description": "Distributed system node",
     "exports": "./index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
