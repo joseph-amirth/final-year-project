@@ -20,7 +20,7 @@ export async function performAggregation() {
     infoln('[Updating Global Model]: Retrieved local models.');
     infoln('[Updating Global Model]: Commencing model aggregation.');
 
-    axios.post('http://aggregator0.example.com:5000/api/aggregate', localModels).then(
+    axios.post('http://host.docker.internal:5000/api/aggregate', localModels).then(
         async response => {
             const cid = response.data;
             infoln(`[Updating Global Model]: Model aggregation successful.`);

@@ -163,18 +163,6 @@ services:
       - 9446:9446
       - 3003:3000
 
-  aggregator0.example.com:
-    container_name: aggregator0.example.com
-    image: aggregator
-    labels:
-      service: hyperledger-fabric
-    working_dir: /aggregator
-    command: python -m flask run --host=0.0.0.0
-    ports:
-      - 5002:5000
-    networks:
-      - test
-
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:latest

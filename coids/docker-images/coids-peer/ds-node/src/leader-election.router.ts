@@ -10,8 +10,11 @@ export const leaderElectionRouter: Router = express.Router();
 
 leaderElectionRouter.get('/', (request: Request, response: Response) => {
     for (const peer of peers) {
-        axios.get(`http://${peer}:3000/leaderelection/initiate`);
-        infoln(`[Sent Init Request]: to ${peer}`);
+        axios.get(`http://${peer}:3000/leaderelection/initiate`).then(response => {
+            infoln(`[Sent Init Request]: to ${peer}`);
+        }, error => {
+            errorln(`Error while sending initiate request to ${peer}: ${error}`);
+        });
     }
     response.send('Leader election initiated');
 });
@@ -28,8 +31,11 @@ leaderElectionRouter.get('/initiate', (request: Request, response: Response) => 
         axios.post(`http://${peer}:3000/leaderelection/postid`, {
             peer: whoami,
             id: id
+        }).then(response => {
+            infoln(`[Sent ID]: ${id} to ${peer}`);
+        }, error => {
+            errorln(`Error while posting id to ${peer}: ${error}`);
         });
-        infoln(`[Sent ID]: ${id} to ${peer}`);
     }
 
     setTimeout(terminate, 10000);

@@ -23,7 +23,7 @@ def retrain():
     arr.append(float(info['OUT_PKTS']))
     arr.append(float(info['FLOW_DURATION_MILLISECONDS']))
 
-    retrain_model(arr, pd.Series([0 if info['label'] == 'benign' else 1]))
+    retrain_model(arr, 0 if info['label'] == 'benign' else 1)
 
     return 'Successfully retrained the local model.'
 

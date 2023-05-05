@@ -9,9 +9,6 @@ def serialize(model):
     model_dict = {
         'config': model_json_str,
         'weights': [layer.tolist() for layer in model.get_weights()],
-        'dtype': str(model.dtype),
-        'input_shape': tuple(model.input.shape[1:]),
-        'output_shape': tuple(model.output.shape[1:]),
     }
 
     model_str = json.dumps(model_dict)
